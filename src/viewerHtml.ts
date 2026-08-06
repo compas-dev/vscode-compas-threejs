@@ -60,6 +60,7 @@ export function getViewerHtml(
       window.compasViewer = {
         mode: "embedded",
         defaultLighting: true,
+        showToolbar: false,
         send(message) {
           vscode.postMessage({ type: "viewer-message", data: message });
           return true;
