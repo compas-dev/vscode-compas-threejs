@@ -1,0 +1,133 @@
+{
+  "name": "vscode-compas-threejs",
+  "displayName": "COMPAS Three.js Viewer",
+  "description": "View COMPAS protobuf geometry and live COMPAS scenes in Visual Studio Code.",
+  "version": "0.1.0",
+  "publisher": "gramaziokohler",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gramaziokohler/vscode-compas-threejs.git"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Visualization",
+    "Other"
+  ],
+  "keywords": [
+    "COMPAS",
+    "three.js",
+    "geometry",
+    "protobuf",
+    "CAD"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCustomEditor:compasThreejs.protobufViewer",
+    "onCommand:compasThreejs.openLiveViewer",
+    "onCommand:compasThreejs.restartLiveServer",
+    "onCommand:compasThreejs.clearLiveViewer"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "compasThreejs.openLiveViewer",
+        "title": "COMPAS: Open Live Viewer",
+        "icon": "$(open-preview)"
+      },
+      {
+        "command": "compasThreejs.restartLiveServer",
+        "title": "COMPAS: Restart Live Server",
+        "icon": "$(debug-restart)"
+      },
+      {
+        "command": "compasThreejs.clearLiveViewer",
+        "title": "COMPAS: Clear Live Viewer",
+        "icon": "$(clear-all)"
+      }
+    ],
+    "customEditors": [
+      {
+        "viewType": "compasThreejs.protobufViewer",
+        "displayName": "COMPAS Three.js Viewer",
+        "selector": [
+          {
+            "filenamePattern": "*.compas.pb"
+          }
+        ],
+        "priority": "default"
+      }
+    ],
+    "configuration": {
+      "title": "COMPAS Three.js Viewer",
+      "properties": {
+        "compasThreejs.live.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Start the COMPAS WebSocket server when VS Code finishes starting."
+        },
+        "compasThreejs.live.host": {
+          "type": "string",
+          "default": "127.0.0.1",
+          "description": "Host interface for the extension-owned COMPAS WebSocket server."
+        },
+        "compasThreejs.live.port": {
+          "type": "number",
+          "default": 9001,
+          "minimum": 1,
+          "maximum": 65535,
+          "description": "Port for the extension-owned COMPAS WebSocket server."
+        },
+        "compasThreejs.live.workspace": {
+          "type": "string",
+          "default": "main",
+          "description": "Workspace shown by the Open Live Viewer command."
+        },
+        "compasThreejs.live.replayMegabytes": {
+          "type": "number",
+          "default": 256,
+          "minimum": 1,
+          "description": "Maximum protobuf replay history retained per live workspace."
+        }
+      }
+    },
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "compasThreejs.openLiveViewer"
+        },
+        {
+          "command": "compasThreejs.restartLiveServer"
+        },
+        {
+          "command": "compasThreejs.clearLiveViewer"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "check": "tsc --noEmit",
+    "compile": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "test": "vitest run",
+    "build": "npm run check && npm run test && npm run compile",
+    "package": "vsce package",
+    "sync-viewer": "node scripts/sync-viewer.mjs",
+    "vscode:prepublish": "npm run build"
+  },
+  "dependencies": {
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.0",
+    "@types/vscode": "^1.85.0",
+    "@types/ws": "^8.18.1",
+    "@vscode/vsce": "^3.9.2",
+    "esbuild": "^0.25.8",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}
