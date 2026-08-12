@@ -27,6 +27,7 @@
     "onStartupFinished",
     "onCustomEditor:compasThreejs.protobufViewer",
     "onCommand:compasThreejs.openLiveViewer",
+    "onCommand:compasThreejs.copyConnectionSnippet",
     "onCommand:compasThreejs.restartLiveServer",
     "onCommand:compasThreejs.clearLiveViewer"
   ],
@@ -42,6 +43,11 @@
         "command": "compasThreejs.restartLiveServer",
         "title": "COMPAS: Restart Live Server",
         "icon": "$(debug-restart)"
+      },
+      {
+        "command": "compasThreejs.copyConnectionSnippet",
+        "title": "COMPAS: Copy Live Connection Snippet",
+        "icon": "$(copy)"
       },
       {
         "command": "compasThreejs.clearLiveViewer",
@@ -76,10 +82,10 @@
         },
         "compasThreejs.live.port": {
           "type": "number",
-          "default": 9001,
-          "minimum": 1,
+          "default": 0,
+          "minimum": 0,
           "maximum": 65535,
-          "description": "Port for the extension-owned COMPAS WebSocket server."
+          "description": "Port for the extension-owned COMPAS WebSocket server. Use 0 to let the operating system choose an available ephemeral port."
         },
         "compasThreejs.live.workspace": {
           "type": "string",
@@ -98,6 +104,9 @@
       "commandPalette": [
         {
           "command": "compasThreejs.openLiveViewer"
+        },
+        {
+          "command": "compasThreejs.copyConnectionSnippet"
         },
         {
           "command": "compasThreejs.restartLiveServer"

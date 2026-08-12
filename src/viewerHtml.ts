@@ -19,11 +19,11 @@ export function getViewerHtml(
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} data:; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; script-src ${webview.cspSource} 'nonce-${nonce}';" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} data:; font-src ${webview.cspSource} data:; style-src ${webview.cspSource} 'unsafe-inline'; script-src ${webview.cspSource} 'nonce-${nonce}';" />
     <link rel="stylesheet" href="${styleUri}" />
     <title>COMPAS Three.js Viewer</title>
     <style>
-      html, body, #app { width: 100%; height: 100%; padding: 0; margin: 0; overflow: hidden; }
+      html, body, #viewer { width: 100%; height: 100%; padding: 0; margin: 0; overflow: hidden; }
       #compas-host-error {
         display: none;
         position: fixed;
@@ -40,11 +40,13 @@ export function getViewerHtml(
     </style>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="viewer"></div>
     <div id="compas-host-error" role="alert"></div>
     <script type="module" nonce="${nonce}">
       const vscode = acquireVsCodeApi();
       const errorElement = document.getElementById("compas-host-error");
+      const viewerElement = document.getElementById("viewer");
+      let viewer;
 
       function showError(value) {
         const message = value instanceof Error ? value.message : String(value);
@@ -57,29 +59,19 @@ export function getViewerHtml(
         errorElement.style.display = "none";
       }
 
-      window.compasViewer = {
-        mode: "embedded",
-        defaultLighting: true,
-        showToolbar: false,
-        send(message) {
-          vscode.postMessage({ type: "viewer-message", data: message });
-          return true;
-        },
-      };
-
       window.addEventListener("message", (event) => {
         const message = event.data;
         try {
           if (message.type === "reset") {
-            window.compasViewer.reset?.();
+            viewer.reset();
             clearError();
             return;
           }
           if (message.type === "replace") {
-            window.compasViewer.reset?.();
+            viewer.reset();
           }
           if (message.type === "replace" || message.type === "dispatch") {
-            window.compasViewer.dispatch(new Uint8Array(message.bytes));
+            viewer.dispatch(new Uint8Array(message.bytes));
             clearError();
             return;
           }
@@ -93,12 +85,27 @@ export function getViewerHtml(
       });
 
       try {
-        await import(${JSON.stringify(scriptUri.toString())});
+        const { createViewer } = await import(${JSON.stringify(scriptUri.toString())});
+        viewer = createViewer(viewerElement, {
+          mode: "embedded",
+          defaultLighting: true,
+          showToolbar: false,
+          send(message) {
+            vscode.postMessage({ type: "viewer-message", data: message });
+            return true;
+          },
+          onError(error) {
+            showError(error);
+            vscode.postMessage({ type: "viewer-error", message: String(error) });
+          },
+        });
         vscode.postMessage({ type: "ready" });
       } catch (error) {
         showError(error);
         vscode.postMessage({ type: "viewer-error", message: String(error) });
       }
+
+      window.addEventListener("pagehide", () => viewer?.dispose(), { once: true });
     </script>
   </body>
 </html>`;

@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { createConnectionSnippet } from "./connectionSnippet";
 import { LiveServer, type LiveServerOptions } from "./liveServer";
 import { LiveViewerManager } from "./liveViewer";
 import { ProtobufEditorProvider } from "./protobufEditor";
@@ -23,8 +24,8 @@ export function activate(context: vscode.ExtensionContext): void {
       status.tooltip = "COMPAS live server is stopped";
       return;
     }
-    status.text = `$(broadcast) COMPAS Live (${server.clientCount})`;
-    status.tooltip = `${server.endpoint}\n${server.clientCount} connected client(s)`;
+    status.text = `$(broadcast) COMPAS :${server.port} (${server.clientCount})`;
+    status.tooltip = `${server.endpoint}\n${server.clientCount} connected client(s)\nUse “COMPAS: Copy Live Connection Snippet” to copy Python connection code.`;
   };
 
   const ensureServer = async (interactive: boolean): Promise<boolean> => {
@@ -71,6 +72,19 @@ export function activate(context: vscode.ExtensionContext): void {
         if (await ensureServer(true)) {
           liveViewers.open(readWorkspace());
         }
+      },
+    ),
+    vscode.commands.registerCommand(
+      "compasThreejs.copyConnectionSnippet",
+      async () => {
+        if (!(await ensureServer(true)) || !server.endpoint) {
+          return;
+        }
+        const snippet = createConnectionSnippet(server.endpoint, readWorkspace());
+        await vscode.env.clipboard.writeText(snippet);
+        void vscode.window.showInformationMessage(
+          `Copied COMPAS connection snippet for port ${server.port}.`,
+        );
       },
     ),
     vscode.commands.registerCommand(
@@ -125,7 +139,7 @@ function readLiveOptions(): LiveServerOptions {
   const configuration = vscode.workspace.getConfiguration("compasThreejs.live");
   return {
     host: configuration.get("host", "127.0.0.1"),
-    port: configuration.get("port", 9001),
+    port: configuration.get("port", 0),
     replayMegabytes: configuration.get("replayMegabytes", 256),
   };
 }
