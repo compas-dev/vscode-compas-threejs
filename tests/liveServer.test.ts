@@ -14,6 +14,7 @@ describe("LiveServer", () => {
     const server = new LiveServer({ appendLine: (line) => output.push(line) });
     servers.push(server);
     await server.start({ host: "127.0.0.1", port: 0, replayMegabytes: 1 });
+    expect(server.port).toBeGreaterThan(0);
 
     const received = new Promise<Uint8Array>((resolve) => {
       server.subscribe("main", resolve);

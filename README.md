@@ -1,7 +1,7 @@
 # COMPAS Three.js Viewer for VS Code
 
 An experimental Visual Studio Code extension that embeds
-[`compas_threejs_ts`](https://github.com/gramaziokohler/compas_threejs_ts) for
+[`compas_threejs_ts`](https://github.com/compas-dev/compas_threejs_ts) for
 two workflows:
 
 - Open `*.compas.pb` geometry dumps as read-only 3D editors.
@@ -33,15 +33,16 @@ file without the custom viewer.
 
 ## Live viewer
 
-The extension starts a WebSocket server at
-`ws://127.0.0.1:9001/ws?workspace=main` by default. Run **COMPAS: Open Live
-Viewer**, then connect with the existing `compas_threejs.viewer.Remote` API:
+The extension asks the operating system for an available ephemeral WebSocket
+port each time its live server starts. The assigned port is shown in the VS Code
+status bar. Run **COMPAS: Copy Live Connection Snippet** and paste the resulting
+code into Python; it uses the active port and configured workspace:
 
 ```python
 from compas.geometry import Box
 from compas_threejs.viewer import Remote
 
-viewer = Remote(host="127.0.0.1", port=9001)
+viewer = Remote(host="127.0.0.1", port=54321, workspace_id="main")  # copied port
 viewer.connect()
 viewer.add_geometry(Box(2, 3, 1))
 ```
@@ -57,6 +58,8 @@ connected producers in the same workspace.
 ### Commands
 
 - **COMPAS: Open Live Viewer** — open or reveal the configured workspace.
+- **COMPAS: Copy Live Connection Snippet** — copy ready-to-paste Python using
+  the currently assigned port and workspace.
 - **COMPAS: Clear Live Viewer** — clear that workspace and its replay history.
 - **COMPAS: Restart Live Server** — apply host or port changes immediately.
 
@@ -64,7 +67,9 @@ connected producers in the same workspace.
 
 - `compasThreejs.live.enabled` — start the server after VS Code starts.
 - `compasThreejs.live.host` — bind address; defaults to `127.0.0.1`.
-- `compasThreejs.live.port` — bind port; defaults to `9001`.
+- `compasThreejs.live.port` — bind port; defaults to `0`, which asks the
+  operating system for an available ephemeral port. Set a non-zero value when a
+  stable endpoint is required.
 - `compasThreejs.live.workspace` — workspace opened by commands.
 - `compasThreejs.live.replayMegabytes` — replay memory limit per workspace.
 
@@ -94,14 +99,24 @@ included sample with:
 python examples/create_box_dump.py
 ```
 
-The generated frontend files under `media/viewer/` are committed so a packaged
-extension has no runtime dependency on the sibling clone. Override the source
-for `npm run sync-viewer` with the `COMPAS_THREEJS_DIST` environment variable.
+The generated self-contained frontend under `media/viewer/` is committed so a
+packaged extension has no runtime dependency on the sibling clone. Override the
+library source for `npm run sync-viewer` with the `COMPAS_THREEJS_DIST`
+environment variable and its build dependency directory with
+`COMPAS_THREEJS_NODE_MODULES`.
 
 ## Architecture
 
 The extension host reads protobuf files or receives binary WebSocket frames and
 transfers their exact `ArrayBuffer` contents into a VS Code webview. The webview
-runs `compas_threejs_ts` in embedded mode and calls
-`window.compasViewer.dispatch(...)`. No HTTP server, Python interpreter, or
-protobuf decoding is required inside the extension host.
+creates an embedded `compas_threejs_ts` viewer through its public `createViewer`
+API and calls the returned instance's `dispatch` method. No HTTP server, Python
+interpreter, or protobuf decoding is required inside the extension host.
+
+## Releasing
+
+Releases are prepared by Release Please pull requests and published to the
+Visual Studio Marketplace by GitHub Actions. See
+[`docs/releasing.md`](docs/releasing.md) for the release flow and one-time
+organization setup. Generated VSIX files are ignored and should not be
+committed.

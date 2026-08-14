@@ -42,6 +42,11 @@ export class LiveServer implements vscode.Disposable {
     return this.endpointValue;
   }
 
+  public get port(): number | undefined {
+    const address = this.server?.address();
+    return address && typeof address !== "string" ? address.port : undefined;
+  }
+
   public get clientCount(): number {
     return this.clientWorkspaces.size;
   }
