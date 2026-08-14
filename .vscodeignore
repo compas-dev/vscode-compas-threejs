@@ -9,3 +9,4 @@ node_modules/**
 esbuild.mjs
 tsconfig.json
 **/*.map
+vscode-compas-threejs-*.vsix

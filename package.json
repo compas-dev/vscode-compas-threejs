@@ -9,6 +9,11 @@
     "type": "git",
     "url": "https://github.com/gramaziokohler/vscode-compas-threejs.git"
   },
+  "homepage": "https://github.com/gramaziokohler/vscode-compas-threejs#readme",
+  "bugs": {
+    "url": "https://github.com/gramaziokohler/vscode-compas-threejs/issues"
+  },
+  "icon": "media/viewer/compas_icon_white.png",
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -123,6 +128,8 @@
     "watch": "node esbuild.mjs --watch",
     "test": "vitest run",
     "build": "npm run check && npm run test && npm run compile",
+    "audit:prod": "npm audit --omit=dev --audit-level=high",
+    "release:check": "npm run build && npm run audit:prod && npm run package -- --out vscode-compas-threejs-${npm_package_version}.vsix",
     "package": "vsce package",
     "sync-viewer": "node scripts/sync-viewer.mjs",
     "vscode:prepublish": "npm run build"

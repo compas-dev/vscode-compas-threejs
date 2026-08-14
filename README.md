@@ -112,3 +112,18 @@ transfers their exact `ArrayBuffer` contents into a VS Code webview. The webview
 creates an embedded `compas_threejs_ts` viewer through its public `createViewer`
 API and calls the returned instance's `dispatch` method. No HTTP server, Python
 interpreter, or protobuf decoding is required inside the extension host.
+
+## Releasing
+
+The first public release is `0.1.0`. Before publishing, rebuild the viewer assets
+from a tagged `compas_threejs_ts` release, review their diff, then run:
+
+```bash
+npm ci
+npm run sync-viewer
+npm run release:check
+npx vsce publish --packagePath vscode-compas-threejs-0.1.0.vsix
+```
+
+Publishing requires access to the `gramaziokohler` Visual Studio Marketplace
+publisher. The generated VSIX is ignored and should not be committed.
