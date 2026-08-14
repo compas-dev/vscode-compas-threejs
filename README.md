@@ -115,15 +115,8 @@ interpreter, or protobuf decoding is required inside the extension host.
 
 ## Releasing
 
-The first public release is `0.1.0`. Before publishing, rebuild the viewer assets
-from a tagged `compas_threejs_ts` release, review their diff, then run:
-
-```bash
-npm ci
-npm run sync-viewer
-npm run release:check
-npx vsce publish --packagePath vscode-compas-threejs-0.1.0.vsix
-```
-
-Publishing requires access to the `gramaziokohler` Visual Studio Marketplace
-publisher. The generated VSIX is ignored and should not be committed.
+Releases are prepared by Release Please pull requests and published to the
+Visual Studio Marketplace by GitHub Actions. See
+[`docs/releasing.md`](docs/releasing.md) for the release flow and one-time
+organization setup. Generated VSIX files are ignored and should not be
+committed.

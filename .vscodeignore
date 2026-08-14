@@ -1,12 +1,17 @@
 .git/**
+.github/**
 .gitignore
 .vscode/**
 .vscodeignore
+docs/**
+examples/**
 src/**
 tests/**
 scripts/**
 node_modules/**
 esbuild.mjs
+release-please-config.json
+.release-please-manifest.json
 tsconfig.json
 **/*.map
 vscode-compas-threejs-*.vsix

@@ -1,0 +1,73 @@
+name: release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Republish the current tagged version to the Marketplace
+        required: true
+        type: boolean
+        default: false
+
+concurrency:
+  group: release-please
+  cancel-in-progress: true
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+    steps:
+      - id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  publish:
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true' || (github.event_name == 'workflow_dispatch' && inputs.publish == true)
+    runs-on: ubuntu-latest
+    environment: marketplace
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Use the declared npm version
+        run: npm install --global npm@11.19.0
+
+      - run: npm ci
+
+      - id: package
+        name: Build and verify VSIX
+        run: |
+          npm run release:check
+          echo "version=$(node --print \"require('./package.json').version\")" >> "$GITHUB_OUTPUT"
+
+      - name: Confirm tagged GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release view "v${{ steps.package.outputs.version }}"
+
+      - name: Publish to Visual Studio Marketplace
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: npx vsce publish --skip-duplicate --packagePath "vscode-compas-threejs-${{ steps.package.outputs.version }}.vsix"
+
+      - name: Attach VSIX to GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "v${{ steps.package.outputs.version }}" "vscode-compas-threejs-${{ steps.package.outputs.version }}.vsix" --clobber
