@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/compas-dev/vscode-compas-threejs/compare/v1.0.0...v1.0.1) (2026-08-14)
+
+
+### Bug Fixes
+
+* correct release version output ([326f869](https://github.com/compas-dev/vscode-compas-threejs/commit/326f869ca72d75e644b6231ef75f8c628c94db3a))
+
 ## 1.0.0 (2026-08-14)
 
 
