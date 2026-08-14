@@ -41,10 +41,17 @@ Before the first release:
    `VSCE_PAT` secret in a protected GitHub environment named `marketplace`.
 3. Restrict the `marketplace` environment to `main` and add required reviewers
    if desired.
-4. In **Settings → Actions → General**, allow GitHub Actions to create pull
+4. Create a fine-grained GitHub token for a release automation account with
+   access to this repository and read/write access to contents, issues, and pull
+   requests. Store it as the repository secret `RELEASE_PLEASE_TOKEN`.
+5. In **Settings → Actions → General**, allow GitHub Actions to create pull
    requests and give workflows read/write repository permission.
-5. Protect `main` and require the `ci / checks` job before merging normal and
+6. Protect `main` and require the `ci / checks` job before merging normal and
    release pull requests.
+
+Release Please uses `RELEASE_PLEASE_TOKEN` instead of the built-in
+`GITHUB_TOKEN` so creating or updating its release pull request triggers the
+normal CI workflow and required status check.
 
 The Marketplace is retiring global Azure DevOps PATs on 2026-12-01. Replace the
 `VSCE_PAT` step with Microsoft Entra ID or Marketplace trusted publishing before
