@@ -55,7 +55,8 @@ jobs:
         name: Build and verify VSIX
         run: |
           npm run release:check
-          echo "version=$(node --print \"require('./package.json').version\")" >> "$GITHUB_OUTPUT"
+          version=$(node --print "require('./package.json').version")
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
 
       - name: Confirm tagged GitHub release
         env:
