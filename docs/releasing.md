@@ -36,12 +36,10 @@ Before the first release:
 
 1. Create or confirm the `compas-dev` publisher in the Visual Studio
    Marketplace and grant the maintainers who approve releases access to it.
-2. Add a Marketplace trusted-publishing policy for GitHub organization
-   `compas-dev`, repository `vscode-compas-threejs`, and workflow
-   `release.yml`. The workflow requests a short-lived OIDC credential and does
-   not store a Marketplace token.
-3. Create a protected GitHub environment named `marketplace`, restrict it to
-   `main`, and add required reviewers
+2. Create an Azure DevOps personal access token for all accessible
+   organizations with the **Marketplace → Manage** scope. Store it only as the
+   `VSCE_PAT` secret in a protected GitHub environment named `marketplace`.
+3. Restrict the `marketplace` environment to `main` and add required reviewers
    if desired.
 4. Create a fine-grained GitHub token for a release automation account with
    access to this repository and read/write access to contents, issues, and pull
@@ -54,3 +52,7 @@ Before the first release:
 Release Please uses `RELEASE_PLEASE_TOKEN` instead of the built-in
 `GITHUB_TOKEN` so creating or updating its release pull request triggers the
 normal CI workflow and required status check.
+
+The Marketplace is retiring global Azure DevOps PATs on 2026-12-01. Replace the
+`VSCE_PAT` step with Microsoft Entra ID or Marketplace trusted publishing before
+that date once the organization has configured the supported identity flow.
