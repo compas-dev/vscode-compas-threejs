@@ -35,7 +35,8 @@
     "onCommand:compasThreejs.openLiveViewer",
     "onCommand:compasThreejs.copyConnectionSnippet",
     "onCommand:compasThreejs.restartLiveServer",
-    "onCommand:compasThreejs.clearLiveViewer"
+    "onCommand:compasThreejs.clearLiveViewer",
+    "onCommand:compasThreejs.getLiveEndpoint"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -59,6 +60,10 @@
         "command": "compasThreejs.clearLiveViewer",
         "title": "COMPAS: Clear Live Viewer",
         "icon": "$(clear-all)"
+      },
+      {
+        "command": "compasThreejs.getLiveEndpoint",
+        "title": "COMPAS: Get Live Server Endpoint"
       }
     ],
     "customEditors": [
@@ -119,6 +124,10 @@
         },
         {
           "command": "compasThreejs.clearLiveViewer"
+        },
+        {
+          "command": "compasThreejs.getLiveEndpoint",
+          "when": "false"
         }
       ]
     }

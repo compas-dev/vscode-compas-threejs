@@ -74,6 +74,20 @@ export function activate(context: vscode.ExtensionContext): void {
         }
       },
     ),
+    // Public API for other extensions: the live server's WebSocket endpoint,
+    // starting the server if it is not already running. The port is normally
+    // ephemeral and is otherwise only visible in the status bar text and the
+    // clipboard snippet, neither of which another extension can read.
+    // Returns undefined if the server could not be started.
+    vscode.commands.registerCommand(
+      "compasThreejs.getLiveEndpoint",
+      async (): Promise<string | undefined> => {
+        if (!(await ensureServer(false))) {
+          return undefined;
+        }
+        return server.endpoint;
+      },
+    ),
     vscode.commands.registerCommand(
       "compasThreejs.copyConnectionSnippet",
       async () => {
