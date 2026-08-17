@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/compas-dev/vscode-compas-threejs/compare/v1.0.1...v1.1.0) (2026-08-17)
+
+
+### Features
+
+* Implement a new command to get the extension's current port ([a57d5fe](https://github.com/compas-dev/vscode-compas-threejs/commit/a57d5fe2c6b0a89a9c4dd65cfca12acdddc03c97))
+* Implement a new command to get the extension's current port ([c062b30](https://github.com/compas-dev/vscode-compas-threejs/commit/c062b30dcb428a99ef7335c808a52095a39be1e4))
+
+
+### Bug Fixes
+
+* bundle viewer with anonymous geometry support ([#5](https://github.com/compas-dev/vscode-compas-threejs/issues/5)) ([081252d](https://github.com/compas-dev/vscode-compas-threejs/commit/081252d4638bc7fe5f95cafc46e56ddbff642ab4))
+
 ## [1.0.1](https://github.com/compas-dev/vscode-compas-threejs/compare/v1.0.0...v1.0.1) (2026-08-14)
 
 
