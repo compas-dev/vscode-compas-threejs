@@ -2,7 +2,7 @@
   "name": "vscode-compas-threejs",
   "displayName": "COMPAS Three.js Viewer",
   "description": "View COMPAS protobuf geometry and live COMPAS scenes in Visual Studio Code.",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "publisher": "compas-dev",
   "license": "MIT",
   "repository": {
