@@ -63,6 +63,25 @@ connected producers in the same workspace.
 - **COMPAS: Clear Live Viewer** — clear that workspace and its replay history.
 - **COMPAS: Restart Live Server** — apply host or port changes immediately.
 
+### Extension API
+
+Other extensions can discover the live server without asking the user to pin a
+port. `compasThreejs.getLiveEndpoint` starts the server if it is not already
+running and resolves to its WebSocket endpoint, or to `undefined` if it could
+not be started:
+
+```ts
+const endpoint = await vscode.commands.executeCommand<string | undefined>(
+  "compasThreejs.getLiveEndpoint",
+);
+// "ws://127.0.0.1:54321/ws"
+```
+
+This exists because the port is normally ephemeral and otherwise appears only in
+the status bar and the clipboard snippet, neither of which another extension can
+read. The workspace to publish into is readable from
+`compasThreejs.live.workspace`.
+
 ### Settings
 
 - `compasThreejs.live.enabled` — start the server after VS Code starts.
